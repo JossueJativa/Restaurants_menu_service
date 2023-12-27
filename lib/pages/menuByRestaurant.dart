@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_demo_restaurant/widgets/cartBoxs.dart';
+import 'package:flutter_demo_restaurant/widgets/redirections.dart';
 
 class MenuByRestaurant extends StatefulWidget {
   final int idRestaurant;
@@ -25,6 +26,8 @@ class _MenuByRestaurantState extends State<MenuByRestaurant> {
         title: Text('Menu by ${widget.nameRestaurant}'),
       ),
       body: CartBoxsMenus(idRestaurant: widget.idRestaurant),
+
+      floatingActionButton: const ShoppingCart(),
     );
   }
 }

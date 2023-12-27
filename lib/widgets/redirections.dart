@@ -59,3 +59,20 @@ class RedirectText extends StatelessWidget {
     );
   }
 }
+
+class ShoppingCart extends StatelessWidget {
+  const ShoppingCart({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        
+      },
+      backgroundColor: Colors.cyan,
+      child: const Icon(Icons.shopping_cart),
+    );
+  }
+}

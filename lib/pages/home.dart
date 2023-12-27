@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo_restaurant/widgets/cartBoxs.dart';
+import 'package:flutter_demo_restaurant/widgets/redirections.dart';
 
 class HomeViewSet extends StatefulWidget {
   const HomeViewSet({super.key});
@@ -37,13 +38,7 @@ class _HomeViewSetState extends State<HomeViewSet> {
         ),
       ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          
-        },
-        backgroundColor: Colors.cyan,
-        child: const Icon(Icons.shopping_cart),
-      ),
+      floatingActionButton: const ShoppingCart(),
     );
   }
 }
