@@ -59,3 +59,33 @@ Future<List<dynamic>> getMenusByRestaurant(int id) async {
     ];
   }
 }
+
+
+Future<List<dynamic>> getFoodsByMenu(int id) async {
+  const String url = '$_url/api/foods/';
+  final Map<String, String> header = {
+    'Content-Type': 'application/json',
+  };
+
+  final http.Response response = await http.get(
+    Uri.parse(url),
+    headers: header,
+  );
+
+  if (response.statusCode == 200) {
+    final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+    for (int i = 0; i < data.length; i++) {
+      if (data[i]['menu'] != id) {
+        data.removeAt(i);
+      }
+    }
+    return data;
+  } else {
+    return [
+      {
+        'result': 'error',
+        'message': 'Error al obtener los productos',
+      }
+    ];
+  }
+}
