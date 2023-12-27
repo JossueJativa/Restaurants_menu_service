@@ -325,14 +325,14 @@ class CartBoxsFoods extends StatelessWidget {
             child: Text('No hay datos disponibles.'),
           );
         } else {
-          final List<dynamic>? menusList = snapshot.data;
+          final List<dynamic>? foodList = snapshot.data;
 
           return ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: menusList!.length,
+            itemCount: foodList!.length,
             itemBuilder: (BuildContext context, int index) {
-              final menus = menusList[index];
+              final menus = foodList[index];
               return MenuItemWidget(
                 photo: menus['photo'],
                 name: menus['name'],

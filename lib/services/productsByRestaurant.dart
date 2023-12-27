@@ -73,8 +73,9 @@ Future<List<dynamic>> getFoodsByMenu(int id) async {
   );
 
   if (response.statusCode == 200) {
-    final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
-    for (int i = 0; i < data.length; i++) {
+    List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+    
+    for (int i = data.length - 1; i >= 0; i--) {
       if (data[i]['menu'] != id) {
         data.removeAt(i);
       }
