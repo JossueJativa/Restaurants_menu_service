@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo_restaurant/pages/cartfood.dart';
 import 'package:flutter_demo_restaurant/pages/home.dart';
 import 'package:flutter_demo_restaurant/pages/login.dart';
 import 'package:flutter_demo_restaurant/pages/register.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         'login': (context) => const LoginViewSet(),
         'register': (context) => const RegisterViewSet(),
         'home': (context) => const HomeViewSet(),
+        'cart':(context) => const Cartfood(),
       },
       debugShowCheckedModeBanner: false,
     );

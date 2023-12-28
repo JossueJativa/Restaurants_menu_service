@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -94,11 +95,15 @@ Future<List<dynamic>> getFoodsByMenu(int id) async {
   }
 }
 
-Future<Map<String, String>> addFoodToCart(int idFood, int idRestaurant, int cuantity) async {
+Future<Map<String, String>> addFoodToCart(int idFood, int cuantity) async {
   const String url = '$_url/api/orders/';
   final prefs = await SharedPreferences.getInstance();
   final int idUser = prefs.getInt('idUser') ?? 0;
   final int idRestaurant = prefs.getInt('idRestaurant') ?? 0;
+
+  if(cuantity == 0){
+    cuantity = 1;
+  }
 
   final String urlFoodPrices = '$_url/api/foods/$idFood';
   final Map<String, String> header = {
@@ -121,6 +126,7 @@ Future<Map<String, String>> addFoodToCart(int idFood, int idRestaurant, int cuan
     'quantity': cuantity,
     'total': total,
     'dish': idFood,
+    'status': 'Pendiente a pagar',
   };
 
   final responseAdd = await http.post(
@@ -129,7 +135,7 @@ Future<Map<String, String>> addFoodToCart(int idFood, int idRestaurant, int cuan
     body: jsonEncode(body),
   );
 
-  if (responseAdd.statusCode == 200) {
+  if (responseAdd.statusCode == 201) {
     return {
       'result': 'success',
       'message': 'Producto agregado al carrito',
@@ -162,6 +168,31 @@ Future<List<dynamic>> getCart() async {
         data.removeAt(i);
       }
     }
+
+    for(int i = data.length - 1; i >= 0; i--) {
+      final String urlRestaurant = '$_url/api/restaurants/${data[i]['restaurant']}';
+      final http.Response responseRestaurant = await http.get(
+        Uri.parse(urlRestaurant),
+        headers: header,
+      );
+
+      final Map<String, dynamic> dataRestaurant = jsonDecode(utf8.decode(responseRestaurant.bodyBytes));
+      final String restaurant = dataRestaurant['name'];
+      data[i]['restaurant'] = restaurant;
+    }
+
+    for(int i = data.length - 1; i >= 0; i--) {
+      final String urlFood = '$_url/api/foods/${data[i]['dish']}';
+      final http.Response responseFood = await http.get(
+        Uri.parse(urlFood),
+        headers: header,
+      );
+
+      final Map<String, dynamic> dataFood = jsonDecode(responseFood.body);
+      final String food = dataFood['name'];
+      data[i]['dish'] = food;
+      data[i]['photoDish'] = dataFood['photo'];
+    }
     return data;
   } else {
     return [
@@ -170,5 +201,23 @@ Future<List<dynamic>> getCart() async {
         'message': 'Error al obtener los productos',
       }
     ];
+  }
+}
+
+Future<bool> deleteCartFood(int id) async{
+  final String url = '$_url/api/orders/$id/';
+  final Map<String, String> header = {
+    'Content-Type': 'application/json',
+  };
+
+  final http.Response response = await http.delete(
+    Uri.parse(url),
+    headers: header,
+  );
+
+  if (response.statusCode == 204) {
+    return true;
+  } else {
+    return false;
   }
 }

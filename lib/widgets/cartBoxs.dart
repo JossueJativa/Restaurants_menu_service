@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, unnecessary_null_comparison, use_key_in_widget_constructors
+// ignore_for_file: file_names, unnecessary_null_comparison, use_key_in_widget_constructors, library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_demo_restaurant/pages/foodByMenu.dart';
@@ -9,11 +9,13 @@ class MenuItemWidget extends StatefulWidget {
   final String photo;
   final String name;
   final String price;
+  final int id;
 
   const MenuItemWidget({
     required this.photo,
     required this.name,
     required this.price,
+    required this.id,
   });
 
   @override
@@ -98,7 +100,11 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
             ),
             IconButton(
               onPressed: () {
-                print('Agregar al carrito: ${widget.name} - Cantidad: $quantity');
+                addFoodToCart(widget.id, quantity);
+                Navigator.pushReplacementNamed(
+                  context,
+                  'home'
+                );
               },
               icon: const Icon(Icons.add_shopping_cart),
             ),
@@ -173,23 +179,6 @@ class RestaurantContainerWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class CointainerMenuProduct extends StatelessWidget {
-  final String photo;
-  final String price;
-  final String name;
-  const CointainerMenuProduct({
-    super.key,
-    required this.photo,
-    required this.price,
-    required this.name,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return MenuItemWidget(photo: photo, name: name, price: price);
   }
 }
 
@@ -372,11 +361,145 @@ class CartBoxsFoods extends StatelessWidget {
                 photo: menus['photo'],
                 name: menus['name'],
                 price: menus['price'].toString(),
+                id: menus['id'],
               );
             },
           );
         }
       },
+    );
+  }
+}
+
+class CartBoxsCart extends StatelessWidget {
+  const CartBoxsCart({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getCart(),
+      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text('No hay datos disponibles.'),
+          );
+        } else {
+          final List<dynamic>? cartList = snapshot.data;
+
+          return ListView.builder(
+            itemCount: cartList!.length,
+            itemBuilder: (BuildContext context, int index) {
+              final cartItem = cartList[index];
+
+              return CartItemWidget(
+                id: cartItem['id'],
+                quantity: cartItem['quantity'],
+                total: cartItem['total'],
+                status: cartItem['status'],
+                restaurant: cartItem['restaurant'],
+                dish: cartItem['dish'],
+                photoDish: cartItem['photoDish'],
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+}
+
+class CartItemWidget extends StatelessWidget {
+  final int quantity;
+  final double total;
+  final String status;
+  final String restaurant;
+  final String dish;
+  final String photoDish;
+  final int id;
+
+  const CartItemWidget({
+    required this.quantity,
+    required this.total,
+    required this.status,
+    required this.restaurant,
+    required this.dish,
+    required this.photoDish,
+    required this.id,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.cyan,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.network(
+            photoDish,
+            width: 100,
+            height: 100,
+          ),
+          const SizedBox(width: 10.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Cantidad: $quantity',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Estado: $status',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Restaurante: $restaurant',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Plato: $dish',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Total: $total',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              deleteCartFood(id);
+              Navigator.pushReplacementNamed(
+                context,
+                'home'
+              );
+            },
+            child: Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+              ),
+              padding: const EdgeInsets.all(8.0),
+              child: const Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
