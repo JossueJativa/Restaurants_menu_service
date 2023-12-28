@@ -4,6 +4,7 @@ import 'package:flutter_demo_restaurant/pages/login.dart';
 import 'package:flutter_demo_restaurant/pages/register.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

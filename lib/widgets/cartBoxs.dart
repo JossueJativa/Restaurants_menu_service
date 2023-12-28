@@ -5,7 +5,7 @@ import 'package:flutter_demo_restaurant/pages/foodByMenu.dart';
 import 'package:flutter_demo_restaurant/pages/menuByRestaurant.dart';
 import 'package:flutter_demo_restaurant/services/productsByRestaurant.dart';
 
-class MenuItemWidget extends StatelessWidget {
+class MenuItemWidget extends StatefulWidget {
   final String photo;
   final String name;
   final String price;
@@ -17,55 +17,90 @@ class MenuItemWidget extends StatelessWidget {
   });
 
   @override
+  _MenuItemWidgetState createState() => _MenuItemWidgetState();
+}
+
+class _MenuItemWidgetState extends State<MenuItemWidget> {
+  int quantity = 0;
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.all(8.0),
       child: Container(
         color: Colors.cyan,
-        padding: const EdgeInsets.all(10),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align left and right
           children: [
-            Image.network(
-              photo,
-              width: 100,
-              height: 100,
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 7.0),
+                  child: Image.network(
+                    widget.photo,
+                    width: 150,
+                    height: 150,
                   ),
-                  if (price != null) ...[
+                ),
+                const SizedBox(width: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      price,
+                      widget.name,
                       style: const TextStyle(
                         fontSize: 20,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Acciones según el contexto
-                    },
-                    child: const Text(
-                      "Agregar al carrito",
-                      style: TextStyle(
-                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    if (widget.price != null) ...[
+                      Text(
+                        widget.price,
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: () {
+                            if (quantity > 0) {
+                              setState(() {
+                                quantity--;
+                              });
+                            }
+                          },
+                        ),
+                        Text(
+                          '$quantity',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              quantity++;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ],
+            ),
+            IconButton(
+              onPressed: () {
+                print('Agregar al carrito: ${widget.name} - Cantidad: $quantity');
+              },
+              icon: const Icon(Icons.add_shopping_cart),
             ),
           ],
         ),

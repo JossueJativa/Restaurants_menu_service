@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_demo_restaurant/services/encription.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 const String _url = 'http://10.0.2.2:8000';
@@ -95,6 +96,7 @@ Future<Map<String, String>> Register_user(String username, String email, String 
 Future<Map<String, String>> Login_user(String email, String password) async {
   const String urlLoginUser = '$_url/api/users/login/';
   late String password_encrypt;
+  final prefs = await SharedPreferences.getInstance();
 
   // Check for nulls
   if (email == "") {
@@ -142,6 +144,7 @@ Future<Map<String, String>> Login_user(String email, String password) async {
       'message': data['error'],
     };
   } else {
+    prefs.setInt("idUser", data['id']);
     return {
       'result': 'success',
       'message': 'Inicio de sesion correcto',
