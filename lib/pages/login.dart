@@ -24,10 +24,10 @@ class _LoginViewSetState extends State<LoginViewSet> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 20.0),
+            padding: const EdgeInsets.only(top: 5.0),
             child: Center(
               child: Image.network(
-                'https://images.rappi.com.ec/restaurants_logo/smiles-logo1-1596481275314-1596662696295-1597699694717.png?e=webp&d=10x10&q=10',
+                'https://i.pinimg.com/originals/07/e8/df/07e8dff15d0a5d850e8b4871ed932e34.jpg',
                 width: 100,
                 height: 100,
               ),

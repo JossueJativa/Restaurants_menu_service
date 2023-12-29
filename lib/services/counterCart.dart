@@ -17,6 +17,8 @@ Future<int> countCart() async {
     'Content-Type': 'application/json',
   };
 
+  await Future.delayed(const Duration(milliseconds: 1000));
+
   final http.Response response = await http.get(
     Uri.parse(url),
     headers: header,

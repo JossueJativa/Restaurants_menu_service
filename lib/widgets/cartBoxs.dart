@@ -102,7 +102,7 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
             IconButton(
               onPressed: () {
                 addFoodToCart(widget.id, quantity);
-                Navigator.pushReplacementNamed(
+                Navigator.popAndPushNamed(
                   context,
                   'home'
                 );
@@ -503,7 +503,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                               informationMessage(context,
                                 '${widget.dish} eliminado 1',
                               );
-                              Navigator.pushReplacementNamed(context, 'cart');
+                              Navigator.popAndPushNamed(context, 'cart');
                             }
                           });
                         },
@@ -517,7 +517,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                             informationMessage(context,
                               '${widget.dish} agregado 1',
                             );
-                            Navigator.pushReplacementNamed(context, 'cart');
+                            Navigator.popAndPushNamed(context, 'cart');
                           });
                         },
                         icon: const Icon(Icons.add),
