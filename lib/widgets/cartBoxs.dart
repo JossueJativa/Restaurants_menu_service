@@ -604,20 +604,27 @@ class CheckoutBox extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    Container(
-                      height: 50,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, 'paycart');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                      child: const Center(
-                        child: Text(
-                          'Pagar',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                      child: const SizedBox(
+                        height: 50,
+                        width: 150,
+                        child: Center(
+                          child: Text(
+                            'Pagar',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),

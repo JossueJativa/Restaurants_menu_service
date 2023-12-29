@@ -167,6 +167,9 @@ Future<List<dynamic>> getCart() async {
       if (data[i]['user'] != idUser) {
         data.removeAt(i);
       }
+      if (data[i]['status'] != 'Pendiente a pagar') {
+        data.removeAt(i);
+      }
     }
 
     for(int i = data.length - 1; i >= 0; i--) {
@@ -263,6 +266,8 @@ Future<Map<String,dynamic>> getTotalCart() async{
     'Content-Type': 'application/json',
   };
 
+  await Future.delayed(const Duration(milliseconds: 200));
+
   final http.Response response = await http.get(
     Uri.parse(url),
     headers: header,
@@ -276,6 +281,9 @@ Future<Map<String,dynamic>> getTotalCart() async{
       if (data[i]['user'] != idUser) {
         data.removeAt(i);
       }
+      if (data[i]['status'] != 'Pendiente a pagar') {
+        data.removeAt(i);
+      }
     }
 
     final List<int> productsid = [];
@@ -284,6 +292,7 @@ Future<Map<String,dynamic>> getTotalCart() async{
       total += data[i]['total'];
       productsid.add(data[i]['id']);
     }
+    prefs.setDouble("total", total);
     return {
       'products': productsid,
       'message': 'Total obtenido',
