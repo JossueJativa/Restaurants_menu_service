@@ -21,6 +21,8 @@ class _CartfoodState extends State<Cartfood> {
       ),
 
       body: const CartBoxsCart(),
+
+      bottomNavigationBar: const CheckoutBox(),
     );
   }
 }

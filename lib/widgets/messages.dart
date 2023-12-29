@@ -21,7 +21,7 @@ errorMessage(BuildContext context, String text){
                   style: const TextStyle(fontSize: 18, color: Colors.white,)),
                   const Spacer(),
                   const Text("MENSAJE DE ERROR!", style: TextStyle(
-                    color: Colors.white, fontSize: 5
+                    color: Colors.white, fontSize: 10
                   ), maxLines: 2, overflow: TextOverflow.ellipsis,)
                 ],
               )
@@ -57,7 +57,7 @@ informationMessage(BuildContext context, String text){
                   style: const TextStyle(fontSize: 18, color: Colors.white,)),
                   const Spacer(),
                   const Text("MENSAJE DE INFORMACION", style: TextStyle(
-                    color: Colors.white, fontSize: 5
+                    color: Colors.white, fontSize: 10
                   ), maxLines: 2, overflow: TextOverflow.ellipsis,)
                 ],
               )
@@ -93,7 +93,7 @@ successMessage(BuildContext context, String text){
                   style: const TextStyle(fontSize: 18, color: Colors.white,)),
                   const Spacer(),
                   const Text("MENSAJE DE EXITO", style: TextStyle(
-                    color: Colors.white, fontSize: 5
+                    color: Colors.white, fontSize: 10
                   ), maxLines: 2, overflow: TextOverflow.ellipsis,)
                 ],
               )

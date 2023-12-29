@@ -63,7 +63,6 @@ Future<List<dynamic>> getMenusByRestaurant(int id) async {
   }
 }
 
-
 Future<List<dynamic>> getFoodsByMenu(int id) async {
   const String url = '$_url/api/foods/';
   final Map<String, String> header = {
@@ -155,6 +154,8 @@ Future<List<dynamic>> getCart() async {
     'Content-Type': 'application/json',
   };
 
+  await Future.delayed(const Duration(milliseconds: 200));
+
   final http.Response response = await http.get(
     Uri.parse(url),
     headers: header,
@@ -203,20 +204,96 @@ Future<List<dynamic>> getCart() async {
   }
 }
 
-Future<bool> deleteCartFood(int id) async{
+Future<void> deleteCartFood(int id) async{
   final String url = '$_url/api/orders/$id/';
   final Map<String, String> header = {
     'Content-Type': 'application/json',
   };
 
-  final http.Response response = await http.delete(
+  await http.delete(
+    Uri.parse(url),
+    headers: header,
+  );
+}
+
+Future<Map<String, String>> updateCart(int id, int cuantity) async{
+  final String url = '$_url/api/orders/$id/';
+  final Map<String, String> header = {
+    'Content-Type': 'application/json',
+  };
+
+  final gerResponse = await http.get(
     Uri.parse(url),
     headers: header,
   );
 
-  if (response.statusCode == 204) {
-    return true;
+  final Map<String, dynamic> data = jsonDecode(gerResponse.body);
+  final double price = data['total'] / data['quantity'];
+  final double total = price * cuantity;
+
+  final Map<String, dynamic> body = {
+    'quantity': cuantity,
+    'total': total,
+  };
+
+  final response = await http.patch(
+    Uri.parse(url),
+    headers: header,
+    body: jsonEncode(body),
+  );
+
+  if (response.statusCode == 200) {
+    return {
+      'result': 'success',
+      'message': 'Producto actualizado',
+    };
   } else {
-    return false;
+    return {
+      'result': 'error',
+      'message': 'Error al actualizar el producto',
+    };
+  }
+}
+
+Future<Map<String,dynamic>> getTotalCart() async{
+  const String url = '$_url/api/orders/';
+  final prefs = await SharedPreferences.getInstance();
+  final int idUser = prefs.getInt('idUser') ?? 0;
+  final Map<String, String> header = {
+    'Content-Type': 'application/json',
+  };
+
+  final http.Response response = await http.get(
+    Uri.parse(url),
+    headers: header,
+  );
+
+  double total = 0;
+
+  if (response.statusCode == 200) {
+    List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+    for (int i = data.length - 1; i >= 0; i--) {
+      if (data[i]['user'] != idUser) {
+        data.removeAt(i);
+      }
+    }
+
+    final List<int> productsid = [];
+
+    for(int i = data.length - 1; i >= 0; i--) {
+      total += data[i]['total'];
+      productsid.add(data[i]['id']);
+    }
+    return {
+      'products': productsid,
+      'message': 'Total obtenido',
+      'total': total,
+    };
+  } else {
+    return {
+      'products': 'No hay productos',
+      'message': 'Error al obtener el total',
+      'total': 0,
+    };
   }
 }

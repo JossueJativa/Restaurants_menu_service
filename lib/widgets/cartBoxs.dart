@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo_restaurant/pages/foodByMenu.dart';
 import 'package:flutter_demo_restaurant/pages/menuByRestaurant.dart';
 import 'package:flutter_demo_restaurant/services/productsByRestaurant.dart';
+import 'package:flutter_demo_restaurant/widgets/messages.dart';
 
 class MenuItemWidget extends StatefulWidget {
   final String photo;
@@ -328,9 +329,9 @@ class CartBoxsMenus extends StatelessWidget {
 
 class CartBoxsFoods extends StatelessWidget {
   final int idMenu;
-  const CartBoxsFoods({ 
+  const CartBoxsFoods({
     required this.idMenu,
-    Key? key 
+    Key? key
   }) : super(key: key);
 
   @override
@@ -414,7 +415,7 @@ class CartBoxsCart extends StatelessWidget {
   }
 }
 
-class CartItemWidget extends StatelessWidget {
+class CartItemWidget extends StatefulWidget {
   final int quantity;
   final double total;
   final String status;
@@ -434,6 +435,12 @@ class CartItemWidget extends StatelessWidget {
   });
 
   @override
+  _CartItemWidgetState createState() => _CartItemWidgetState();
+}
+
+class _CartItemWidgetState extends State<CartItemWidget> {
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -442,64 +449,186 @@ class CartItemWidget extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       padding: const EdgeInsets.all(10.0),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(
-            photoDish,
-            width: 100,
-            height: 100,
-          ),
-          const SizedBox(width: 10.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Cantidad: $quantity',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Estado: $status',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Restaurante: $restaurant',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Plato: $dish',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Total: $total',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              deleteCartFood(id);
-              Navigator.pushReplacementNamed(
-                context,
-                'home'
-              );
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.network(
+                widget.photoDish,
+                width: 100,
+                height: 100,
               ),
-              padding: const EdgeInsets.all(8.0),
-              child: const Icon(
-                Icons.delete,
-                color: Colors.white,
+              const SizedBox(width: 10.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Cantidad: ${widget.quantity}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Estado: ${widget.status}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Restaurante: ${widget.restaurant}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Plato: ${widget.dish}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Total: ${widget.total}',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              const SizedBox(width: 10.0),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if(widget.quantity > 1) {
+                              int currentQuantity = widget.quantity - 1;
+                              updateCart(widget.id, currentQuantity);
+                              informationMessage(context,
+                                '${widget.dish} eliminado 1',
+                              );
+                              Navigator.pushReplacementNamed(context, 'cart');
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.remove),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            int currentQuantity0 = widget.quantity + 1;
+                            updateCart(widget.id, currentQuantity0);
+                            informationMessage(context,
+                              '${widget.dish} agregado 1',
+                            );
+                            Navigator.pushReplacementNamed(context, 'cart');
+                          });
+                        },
+                        icon: const Icon(Icons.add),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          deleteCartFood(widget.id);
+                          Navigator.pushReplacementNamed(context, 'cart');
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(8.0),
+                          child: const Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
+    );
+  }
+}
+
+class CheckoutBox extends StatelessWidget {
+  const CheckoutBox({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: getTotalCart(),
+      builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          double total = snapshot.data?['total'] ?? 0.0;
+          return Container(
+            height: 60,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 5,
+                )
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Total',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      '\$ ${total.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Pagar',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 }
