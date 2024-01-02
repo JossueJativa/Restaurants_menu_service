@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_types_as_parameter_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:flutter_demo_restaurant/services/paymentlogic.dart';
@@ -14,7 +16,7 @@ class _PaycartState extends State<Paycart> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalles de Pago'),
+        title: const Text('Detalles de Pago'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
@@ -27,6 +29,7 @@ class _PaycartState extends State<Paycart> {
                 expiryDate: '04/24',
                 cardHolderName: 'John Doe',
                 cvvCode: '123',
+                // ignore: non_constant_identifier_names
                 showBackView: false, onCreditCardWidgetChange: (CreditCardBrand ) {  },
               ),
               const SizedBox(height: 20),
