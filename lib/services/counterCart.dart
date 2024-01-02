@@ -28,7 +28,7 @@ Future<int> countCart() async {
     final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
     int count = 0;
     for (int i = 0; i < data.length; i++) {
-      if (data[i]['user'] == idUser) {
+      if (data[i]['user'] == idUser && data[i]['status'] == 'Pendiente a pagar') {
         count++;
       }
     }
