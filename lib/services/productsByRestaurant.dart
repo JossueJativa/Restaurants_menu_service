@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-const String _url = 'http://10.0.2.2:8000';
+const String _url = 'http://10.0.2.2:8080';
 
 Future<List<dynamic>> getRestaurants() async {
   const String url = '$_url/api/restaurants/';
@@ -281,7 +281,7 @@ Future<Map<String,dynamic>> getTotalCart() async{
       if (data[i]['user'] != idUser) {
         data.removeAt(i);
       }
-      if (data[i]['status'] != 'Pendiente a pagar') {
+      if (data[i]['status'] != 'Pendiente a pagar' || data[i]['status'] == "Preparando" || data[i]['status'] == "Listo" || data[i]['status'] == "Entregado") {
         data.removeAt(i);
       }
     }

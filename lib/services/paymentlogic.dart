@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-const String _url = 'http://10.0.2.2:8000';
+const String _url = 'http://10.0.2.2:8080';
 
 Future<Map<String,dynamic>> makePayment (String cartNumber, String cvv, String expirationDate, String nameCart) async {
   if (cartNumber == ""){
@@ -87,7 +87,14 @@ Future<Map<String,dynamic>> makePayment (String cartNumber, String cvv, String e
 
     List<dynamic> dataOrders = json.decode(utf8.decode(responseOrder.bodyBytes));
     for (int i = data.length - 1; i >= 0; i--) {
-      if (data[i]['user'] != idUser) {
+      if (dataOrders[i]['user'] != idUser ) {
+        dataOrders.removeAt(i);
+      }
+    }
+
+    for(int i = data.length -1; i >= 0; i--){
+      if (dataOrders[i]['status'] != 'Pagado' || dataOrders[i]['status'] == 'Preparando' 
+          || dataOrders[i]['status'] == 'Entregado' || dataOrders[i]['status'] == 'Listo') {
         dataOrders.removeAt(i);
       }
     }
@@ -159,11 +166,12 @@ Future<Map<String, String>> makePaymentInCash () async {
       headers: header,
     );
 
-    print(responseOrder.statusCode);
-
     List<dynamic> dataOrders = jsonDecode(utf8.decode(responseOrder.bodyBytes));
     for (int i = dataOrders.length - 1; i >= 0; i--) {
-      if (dataOrders[i]['user'] != idUser) {
+      if (dataOrders[i]['user'] != idUser && dataOrders[i]['status'] != 'Pagado' ) {
+        dataOrders.removeAt(i);
+      }
+      if (dataOrders[i]['status'] == 'Preparando' || dataOrders[i]['status'] == 'Entregado' || dataOrders[i]['status'] == 'Listo') {
         dataOrders.removeAt(i);
       }
     }
@@ -188,10 +196,6 @@ Future<Map<String, String>> makePaymentInCash () async {
       final String idOrderTable = '$idOrder$idUser';
       final int idRestaurant = dataOrders[i]['restaurant'];
       final int idOrderToTable = dataOrders[i]['id'];
-
-      print(idOrderTable);
-      print(idRestaurant);
-      print(idOrderToTable);
 
       final Map<String, dynamic> dataOrderTable = {
         'number': idOrderTable,

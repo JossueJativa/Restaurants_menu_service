@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-const String _url = 'http://10.0.2.2:8000';
+const String _url = 'http://10.0.2.2:8080';
 
 
 Future<Map<String, String>> Register_user(String username, String email, String phone, String password, String confirmPassword, String address) async {
